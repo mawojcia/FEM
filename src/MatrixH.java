@@ -1,3 +1,5 @@
+import java.io.FileNotFoundException;
+
 public class MatrixH {
 
     Jacobian jacobian;
@@ -9,10 +11,11 @@ public class MatrixH {
 
     double[][][] sum = new double[4][4][4];
 
-    double K = 30;
 
-    public MatrixH(Jacobian jacobian) {
+    public MatrixH(Jacobian jacobian) throws FileNotFoundException {
         this.jacobian = jacobian;
+        GetFromFile data = new GetFromFile();
+        double conductivity = data.conductivity;
 
         for (int i = 0; i < 4; i++)
         {
@@ -23,13 +26,9 @@ public class MatrixH {
                     matrixX[i][j][k] = jacobian.dNdX[i][j] * jacobian.dNdX[i][k];
                     matrixY[i][j][k] = jacobian.dNdY[i][j] * jacobian.dNdY[i][k];
 
-                    System.out.print(matrixX[i][j][k]+" ");
-
-                    sum[i][j][k] = (matrixX[i][j][k] + matrixY[i][j][k])*K*jacobian.detJ[i];
+                    sum[i][j][k] = (matrixX[i][j][k] + matrixY[i][j][k])*conductivity*jacobian.detJ[i];
                 }
-                System.out.println();
             }
-            System.out.println("\n");
         }
 
         for (int i = 0; i < 4; i++)
@@ -42,16 +41,5 @@ public class MatrixH {
                 }
             }
         }
-
-        for(int i = 0; i < 4; i++) {
-
-            for(int j = 0; j < 4; j++) {
-
-                System.out.print(matrixH[i][j]+" ");
-            }
-            System.out.println();
-        }
-
-
     }
 }

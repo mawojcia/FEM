@@ -2,7 +2,7 @@ import java.io.FileNotFoundException;
 
 import static java.lang.StrictMath.sqrt;
 
-public class MatrixH_BC {
+public class VectorP {
 
     Jacobian jacobian;
 
@@ -17,12 +17,14 @@ public class MatrixH_BC {
     double[][] pow3 = new double[4][4];
     double[][] pow4 = new double[4][4];
 
-    double[][] matrixHBC = new double[4][4];
+    double[][] vectorP = new double[4][4];
 
-    public MatrixH_BC(Jacobian jacobian, int[] edge) throws FileNotFoundException {
+    public VectorP(Jacobian jacobian, int[] edge) throws FileNotFoundException {
+
         this.jacobian = jacobian;
         GetFromFile data = new GetFromFile();
         double alfa = data.alfa;
+        double ambient_temperature = data.ambient_temperature;
 
         //DLUGOSCI BOKOW
         for(int i = 0; i < 4; i++) {
@@ -34,10 +36,9 @@ public class MatrixH_BC {
             detJ[i] = borderLength[i]/2;
         }
 
-
         //##############POW 1####################
-        ksi[0] = -1/sqrt(3);
-        ksi[1] = 1/sqrt(3);
+        ksi[0] = -1;
+        ksi[1] = 1;
         eta[0] = eta[1] = -1;
 
         for(int i = 0; i < 2; i++) {
@@ -49,15 +50,15 @@ public class MatrixH_BC {
 
         for(int i = 0; i < 4; i++){
             for(int j = 0; j < 4; j++){
-                pow1[i][j] = ((N[0][i]*N[0][j])+(N[1][i]*N[1][j]))*detJ[0]*alfa;
+                pow1[i][j] = ((N[0][i]*N[0][j])+(N[1][i]*N[1][j]))*detJ[0]*alfa*ambient_temperature;
             }
         }
 
 
         //##############POW 2####################
         ksi[0] = ksi[1] = 1;
-        eta[0] = -1/sqrt(3);
-        eta[1] = 1/sqrt(3);
+        eta[0] = -1;
+        eta[1] = 1;
 
         for(int i = 0; i < 2; i++) {
             N[i][0] = 0.25 * (1-ksi[i])*(1-eta[i]);
@@ -68,14 +69,14 @@ public class MatrixH_BC {
 
         for(int i = 0; i < 4; i++){
             for(int j = 0; j < 4; j++){
-                pow2[i][j] = ((N[0][i]*N[0][j])+(N[1][i]*N[1][j]))*detJ[1]*alfa;
+                pow2[i][j] = ((N[0][i]*N[0][j])+(N[1][i]*N[1][j]))*detJ[1]*alfa*ambient_temperature;
             }
         }
 
 
         //##############POW 3####################
-        ksi[0] = 1/sqrt(3);
-        ksi[1] = -1/sqrt(3);
+        ksi[0] = 1;
+        ksi[1] = -1;
         eta[0] = eta[1] = 1;
 
         for(int i = 0; i < 2; i++) {
@@ -87,15 +88,15 @@ public class MatrixH_BC {
 
         for(int i = 0; i < 4; i++){
             for(int j = 0; j < 4; j++){
-                pow3[i][j] = ((N[0][i]*N[0][j])+(N[1][i]*N[1][j]))*detJ[2]*alfa;
+                pow3[i][j] = ((N[0][i]*N[0][j])+(N[1][i]*N[1][j]))*detJ[2]*alfa*ambient_temperature;
             }
         }
 
 
         //##############POW 4####################
         ksi[0] = ksi[1] = -1;
-        eta[0] = 1/sqrt(3);
-        eta[1] = -1/sqrt(3);
+        eta[0] = 1;
+        eta[1] = -1;
 
         for(int i = 0; i < 2; i++) {
             N[i][0] = 0.25 * (1-ksi[i])*(1-eta[i]);
@@ -106,13 +107,13 @@ public class MatrixH_BC {
 
         for(int i = 0; i < 4; i++){
             for(int j = 0; j < 4; j++){
-                pow4[i][j] = ((N[0][i]*N[0][j])+(N[1][i]*N[1][j]))*detJ[3]*alfa;
+                pow4[i][j] = ((N[0][i]*N[0][j])+(N[1][i]*N[1][j]))*detJ[3]*alfa*ambient_temperature;
             }
         }
 
         for(int i = 0; i < 4; i++) {
             for(int j = 0; j < 4; j++) {
-                matrixHBC[i][j] = pow1[i][j] * edge[0] + pow2[i][j] * edge[1] + pow3[i][j] * edge[2] + pow4[i][j] * edge[3];
+                vectorP[i][j] = pow1[i][j] * edge[0] + pow2[i][j] * edge[1] + pow3[i][j] * edge[2] + pow4[i][j] * edge[3];
                 //System.out.print(matrixHBC[i][j]+" ");
             }
             //System.out.println();

@@ -31,7 +31,7 @@ public class Jacobian {
             x[i] = nodes[i].x;
             y[i] = nodes[i].y;
 
-            System.out.println("("+x[i]+","+y[i]+")");
+            //System.out.println("("+x[i]+","+y[i]+")");
         }
 
         ksi[0] = -1/(Math.sqrt(3));
@@ -52,7 +52,7 @@ public class Jacobian {
             N[i][1] = 0.25*(1+ksi[i])*(1-eta[i]);
             N[i][2] = 0.25*(1+ksi[i])*(1+eta[i]);
             N[i][3] = 0.25*(1-ksi[i])*(1+eta[i]);
-            //System.out.println(N[i][0]+"\n");
+            //System.out.println(N[i][0]+"\n"); OK
         }
 
 
@@ -70,7 +70,7 @@ public class Jacobian {
             dNdEta[i][2] = 0.25*(1+ksi[i]);
             dNdEta[i][3] = 0.25*(1-ksi[i]);
 
-            System.out.println(dNdKsi[i][0]+"\n");
+            //System.out.println(dNdKsi[i][0]+"\n"); OK
         }
 
 
@@ -80,14 +80,14 @@ public class Jacobian {
             dXdEta[i] = dNdEta[i][0]*x[0] + dNdEta[i][1]*x[1] + dNdEta[i][2]*x[2] + dNdEta[i][3]*x[3];
             dYdKsi[i] = dNdKsi[i][0]*y[0] + dNdKsi[i][1]*y[1] + dNdKsi[i][2]*y[2] + dNdKsi[i][3]*y[3];
             dYdEta[i] = dNdEta[i][0]*y[0] + dNdEta[i][1]*y[1] + dNdEta[i][2]*y[2] + dNdEta[i][3]*y[3];
-            System.out.println(dXdKsi[i]+", "+dXdEta[i]+", "+dYdKsi[i]+", "+dYdEta[i]);
+            //System.out.println(dXdKsi[i]+", "+dXdEta[i]+", "+dYdKsi[i]+", "+dYdEta[i]); OK
         }
 
         //detJ
         for(int i = 0; i < 4; i++) {
             detJ[i] = (dYdEta[i]*dXdKsi[i])-(dYdKsi[i]*dXdEta[i]);
 
-            System.out.println(detJ[i]+"\n");
+            //System.out.println(detJ[i]+"\n"); OK
         }
 
         //obliczamy dN/dx, dNdy (odwrocona macierz A)
@@ -101,6 +101,9 @@ public class Jacobian {
             dNdY[i][1] = (1/detJ[i]) * (-dXdEta[i]*dNdKsi[i][1] + dXdKsi[i]*dNdEta[i][1]);
             dNdY[i][2] = (1/detJ[i]) * (-dXdEta[i]*dNdKsi[i][2] + dXdKsi[i]*dNdEta[i][2]);
             dNdY[i][3] = (1/detJ[i]) * (-dXdEta[i]*dNdKsi[i][3] + dXdKsi[i]*dNdEta[i][3]);
+
+            //System.out.print(dNdX[i][0]+" ");
         }
+        //System.out.print("\n");
     }
 }
