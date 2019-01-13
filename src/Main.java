@@ -3,19 +3,15 @@ import java.io.FileNotFoundException;
 public class Main {
 
 
-    public static void main(String[] args) throws FileNotFoundException{
+    public static void main(String[] args) throws Exception{
 
-        Grid grid = new Grid();
+        //Grid grid = new Grid();
+        ReadJson.jsonData();
 
-        grid.printGrid();
-//
-//        Node node1 = new Node(0, 0, 1);
-//        Node node2 = new Node(10, 0, 2);
-//        Node node3 = new Node(10, 8, 3);
-//        Node node4 = new Node(0, 8, 4);
-//        Element element = new Element(node1, node2, node3, node4, 1, 30);
-//
-//        Jacobian jacobian = new Jacobian(element.nodes);
-//        MatrixC matrixC = new MatrixC(jacobian);
+        System.out.print(ReadJson.H + " " + ReadJson.L + " " +
+                ReadJson.NH + " " + ReadJson.NL + " " + ReadJson.INITIAL_TEMPERATURE + " " + ReadJson.AMBIENT_TEMPERATURE + " " +
+                ReadJson.ALFA + " " + ReadJson.CONDUCTIVITY + " " + ReadJson.DENSITY + " " +
+                ReadJson.SPECIFIC_HEAT + " " + ReadJson.SIMULATION_TIME + " " +
+                ReadJson.SIMULATION_STEP_TIME + " ");
     }
 }

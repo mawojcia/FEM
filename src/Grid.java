@@ -15,7 +15,7 @@ public class Grid {
     double[][] globalMatrixH = new double[nH*nL][nH*nL];
     double[][] globalMatrixC = new double[nH*nL][nH*nL];
     double[][] globalMatrixH_bc = new double[nH*nL][nH*nL];
-    double[][] globalVectorPtmp = new double[nH*nL][nH*nL];
+    double[][] globalVectorP = new double[nH*nL][nH*nL];
     double[] vectorP = new double[nH*nL];
 
     public Grid() throws FileNotFoundException{
@@ -58,10 +58,10 @@ public class Grid {
                 //System.out.print(" Edge: "+ elements[i].edge[0]);
 
                 //Prawo
-                if(elements[i].nodes[j].x == l || (elements[i].nodes[j].y) > l - 0.000000000001) elements[i].edge[1] = 1;
+                if(elements[i].nodes[j].x == l) elements[i].edge[1] = 1;
 
                 //Góra
-                if(elements[i].nodes[j].y == h || (elements[i].nodes[j].y) > h - 0.000000000001) elements[i].edge[2] = 1;
+                if(elements[i].nodes[j].y == h) elements[i].edge[2] = 1;
 
                 //Lewo
                 if(elements[i].nodes[j].x == 0) elements[i].edge[3] = 1;
@@ -72,7 +72,7 @@ public class Grid {
 
         for(int i = 0; i < elementsAmount; i++) {
 
-            elements[i].jacobian = new Jacobian(elements[i].getNodes());
+            elements[i].jacobian = new Jacobian(elements[i].nodes);
             elements[i].matrixH = new MatrixH(elements[i].jacobian);
             elements[i].matrixC = new MatrixC(elements[i].jacobian);
             elements[i].matrixH_bc = new MatrixH_BC(elements[i].jacobian, elements[i].edge);
@@ -95,17 +95,17 @@ public class Grid {
                     globalMatrixH[elements[i].nodes[j].id][elements[i].nodes[k].id] += elements[i].matrixH.matrixH[j][k];
                     globalMatrixH_bc[elements[i].nodes[j].id][elements[i].nodes[k].id] += elements[i].matrixH_bc.matrixHBC[j][k];
                     globalMatrixC[elements[i].nodes[j].id][elements[i].nodes[k].id] += elements[i].matrixC.C[j][k];
-                    globalVectorPtmp[elements[i].nodes[j].id][elements[i].nodes[k].id] += elements[i].vectorP.vectorP[j][k];
+                    globalVectorP[elements[i].nodes[j].id][elements[i].nodes[k].id] += elements[i].vectorP.vectorP[j][k];
                 }
             }
         }
 
-        for(int i = 0; i < nH*nL; i++) {
-            for(int j = 0; j < nH*nL; j++) {
-                System.out.print(globalMatrixC[i][j]+" ");
-            }
-            System.out.println();
-        }
+//        for(int i = 0; i < nH*nL; i++) {
+//            for(int j = 0; j < nH*nL; j++) {
+//                System.out.print(globalMatrixC[i][j]+" ");
+//            }
+//            System.out.println();
+//        }
 
         double[] temperatures = new double[nodesAmount];
 
@@ -116,17 +116,34 @@ public class Grid {
         double[][] HC = new double[nodesAmount][nodesAmount];
         double step_time = data.simulation_step_time;
 
+//        int flaga = 0;
+        double[][] globalVectorPtmp = new double[nodesAmount][nodesAmount];
+
         for(int z = 0; z < data.simulation_time/data.simulation_step_time; z++) {
+
+            System.out.print("\n");
 
             for (int i = 0; i < nodesAmount; i++) {
                 vectorP[i] = 0;
                 for (int j = 0; j < nodesAmount; j++) {
-                    HC[i][j] = globalMatrixH[i][j]+(globalMatrixC[i][j]/ data.simulation_step_time) +globalMatrixH_bc[i][j];
-                    globalVectorPtmp[i][j] = globalVectorPtmp[i][j] + (globalMatrixC[i][j] / data.simulation_step_time) * temperatures[j];
+                    HC[i][j] = globalMatrixH[i][j]+(globalMatrixC[i][j]/ data.simulation_step_time) + globalMatrixH_bc[i][j];
+                    globalVectorPtmp[i][j] = globalVectorP[i][j] + (globalMatrixC[i][j] / data.simulation_step_time) * temperatures[j];
                     vectorP[i] += globalVectorPtmp[i][j];
                 }
                 //System.out.print(vectorP[i]+" * ");
             }
+            //System.out.print("\n");
+
+//            if(flaga < 2) {
+//                for (int i = 0; i < nodesAmount; i++) {
+//                    for (int j = 0; j < nodesAmount; j++) {
+//                        System.out.print(HC[i][j] + " ");
+//                    }
+//                    System.out.println();
+//                }
+//                flaga ++;
+//            }
+//            System.out.print("\n\n");
 
             double m, s;
             double[][] globalMatrixHtmp = new double[nodesAmount][nodesAmount+1];
@@ -164,7 +181,11 @@ public class Grid {
                 }
                 vectorP[i] = s / globalMatrixHtmp[i][i];
                 temperatures[i]	= vectorP[i];
+
+//                System.out.print(vectorP[i] + " # " );
             }
+//            System.out.print("\n");
+
 
             double minTemp = temperatures[0];
             double maxTemp = temperatures[0];
