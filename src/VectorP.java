@@ -19,6 +19,8 @@ public class VectorP {
 
     double[][] vectorP = new double[4][4];
 
+//    WEKTOR OBCIĄŻEŃ STRUMIENI CIEPLNYCH
+
     public VectorP(Jacobian jacobian, int[] edge) throws FileNotFoundException {
 
         this.jacobian = jacobian;
@@ -114,9 +116,7 @@ public class VectorP {
         for(int i = 0; i < 4; i++) {
             for(int j = 0; j < 4; j++) {
                 vectorP[i][j] = pow1[i][j] * edge[0] + pow2[i][j] * edge[1] + pow3[i][j] * edge[2] + pow4[i][j] * edge[3];
-                //System.out.print(matrixHBC[i][j]+" ");
             }
-            //System.out.println();
         }
     }
 }

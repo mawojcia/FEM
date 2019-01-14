@@ -5,15 +5,15 @@ import java.util.Scanner;
 public class GetFromFile {
 
     int nH, nL;
-    double H, L, initial_temperature, ambient_temperature;
+    double H, L, initial_temperature, ambient_temperature, specific_heat;
     double alfa, conductivity, density, simulation_time, simulation_step_time;
 
     public GetFromFile() throws FileNotFoundException {
         File file = new File("dane.txt");
         Scanner in = new Scanner(file);
-        String[] line = new String[11];
+        String[] line = new String[12];
 
-        for(int i = 0; i < 11; i++) {
+        for(int i = 0; i < 12; i++) {
 
             line[i] = in.nextLine();
         }
@@ -28,7 +28,7 @@ public class GetFromFile {
         density = Double.parseDouble(line[8]);
         simulation_time = Double.parseDouble(line[9]);
         simulation_step_time = Double.parseDouble(line[10]);
-
+        specific_heat = Double.parseDouble(line[11]);
 
     }
 

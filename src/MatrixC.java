@@ -1,6 +1,6 @@
-public class MatrixC {
+import java.io.FileNotFoundException;
 
-    //c*ro* {N} * {N}^T
+public class MatrixC {
 
     Jacobian jacobian;
     double c = 700;
@@ -9,19 +9,19 @@ public class MatrixC {
     double[][][] NNT = new double[4][4][4];
     double[][] C = new double[4][4];
 
-    public MatrixC(Jacobian jacobian) {
+//    potrzebny do wyznaczania temperatury
+
+    public MatrixC(Jacobian jacobian) throws FileNotFoundException {
         this.jacobian = jacobian;
+        GetFromFile data = new GetFromFile();
 
         for(int i = 0; i < 4; i++){
             for(int j = 0; j < 4; j++){
                 for(int k = 0; k < 4; k++){
-
-                    NNT[i][k][j] = jacobian.N[j][i] * jacobian.N[i][k] * jacobian.detJ[i] * c * ro;
-                    //System.out.print(NNT[i][j][k]+" ");
+//                    c*ro*{N}{N}T
+                    NNT[i][k][j] = jacobian.N[j][i] * jacobian.N[i][k] * jacobian.detJ[i] * data.specific_heat * data.density;
                 }
-                //System.out.println();
             }
-            //System.out.println("\n");
         }
 
         for(int i = 0; i < 4; i++) {
@@ -31,13 +31,5 @@ public class MatrixC {
                 }
             }
         }
-
-//        for(int i = 0; i < 4; i++) {
-//            for(int j = 0; j < 4; j++){
-//                System.out.print(C[i][j]+"  ");
-//            }
-//            System.out.println();
-//        }
-//        System.out.print("\n \n");
     }
 }

@@ -25,19 +25,20 @@ public class Grid {
         nodes = new Node[nodesAmount];
         elements = new Element[elementsAmount];
 
-        double iInc = (l / (nL - 1));
-        double jInc = (h / (nH - 1));
+
+//STWORZENIE TABLICY NODÓW, NA PODSTAWIE KROKÓW WZDŁUŻ I WZWYŻ
+        double lStep = (l / (nL - 1));
+        double hStep = (h / (nH - 1));
         int index = 0;
 
-//Stworzenie tablicy nodow, ustalenie wspolrzednych na podstawie wysokosci, dlugosci oraz "skoku"
-        for(double i = 0; i < nL*iInc; i += iInc) {
-            for(double j = 0; j <nH*jInc; j += jInc) {
-                nodes[index] = new Node(i, j, index);
+        for(double i = 0; i < nL; i++) {
+            for(double j = 0; j <nH; j++) {
+                nodes[index] = new Node(i*lStep, j*hStep, index);
                 index++;
             }
         }
 
-//Stworzenie tablicy elementow
+//STWORZENIE TABLICY ELEMENTÓW
         index = 0;
 
         for(int i = 0; i < nL - 1; i++) {
@@ -48,14 +49,13 @@ public class Grid {
             }
         }
 
-//Sprawdzamy krawedzie elementu
+//SPRAWDZAMY CZY ŚCIANY ELEMENTÓW SĄ KRAWĘDZIAMI CAŁEJ SIATKI
 
         for(int i = 0; i < elementsAmount; i++) {
             for(int j = 0; j < 4; j++) {
 
                 //Dół
                 if(elements[i].nodes[j].y == 0) elements[i].edge[0] = 1;
-                //System.out.print(" Edge: "+ elements[i].edge[0]);
 
                 //Prawo
                 if(elements[i].nodes[j].x == l) elements[i].edge[1] = 1;
@@ -68,7 +68,7 @@ public class Grid {
             }
         }
 
-//jacobian
+//jacobian, macierze
 
         for(int i = 0; i < elementsAmount; i++) {
 
@@ -78,14 +78,6 @@ public class Grid {
             elements[i].matrixH_bc = new MatrixH_BC(elements[i].jacobian, elements[i].edge);
             elements[i].vectorP = new VectorP(elements[i].jacobian, elements[i].edge);
         }
-
-//        for(int i = 0; i < elementsAmount; i++) {
-//            for(int j =0;j<4; j++){
-//                for(int k = 0; k < 4; k++) System.out.print(elements[i].matrixC.C[j][k] + " ");
-//                System.out.print("\n");
-//            }
-//            System.out.print("\n\n");
-//        }
 
 //globalne macierze
 
@@ -99,13 +91,6 @@ public class Grid {
                 }
             }
         }
-
-//        for(int i = 0; i < nH*nL; i++) {
-//            for(int j = 0; j < nH*nL; j++) {
-//                System.out.print(globalMatrixC[i][j]+" ");
-//            }
-//            System.out.println();
-//        }
 
         double[] temperatures = new double[nodesAmount];
 
@@ -158,7 +143,7 @@ public class Grid {
                 }
             }
 
-            //Eliminacja wspó³czynników
+            //zerowanie wspolczynnikow
             for (int i = 0; i < nodesAmount - 1; i++)
             {
                 for (int j = i + 1; j < nodesAmount; j++)

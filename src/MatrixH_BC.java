@@ -19,6 +19,8 @@ public class MatrixH_BC {
 
     double[][] matrixHBC = new double[4][4];
 
+//    alfa*{N}{N}T
+
     public MatrixH_BC(Jacobian jacobian, int[] edge) throws FileNotFoundException {
         this.jacobian = jacobian;
         GetFromFile data = new GetFromFile();
@@ -113,9 +115,10 @@ public class MatrixH_BC {
         for(int i = 0; i < 4; i++) {
             for(int j = 0; j < 4; j++) {
                 matrixHBC[i][j] = pow1[i][j] * edge[0] + pow2[i][j] * edge[1] + pow3[i][j] * edge[2] + pow4[i][j] * edge[3];
-                //System.out.print(matrixHBC[i][j]+" ");
+                System.out.print(matrixHBC[i][j]+ " ");
             }
-            //System.out.println();
+            System.out.print("\n");
         }
+        System.out.print("\n\n");
     }
 }
