@@ -25,6 +25,10 @@ public class Grid {
         nodes = new Node[nodesAmount];
         elements = new Element[elementsAmount];
 
+        java.text.DecimalFormat df = new java.text.DecimalFormat("###.##");
+        df.setMaximumFractionDigits(3);
+        df.setMinimumFractionDigits(0);
+
 
 //STWORZENIE TABLICY NODÓW, NA PODSTAWIE KROKÓW WZDŁUŻ I WZWYŻ
         double lStep = (l / (nL - 1));
@@ -44,7 +48,7 @@ public class Grid {
         for(int i = 0; i < nL - 1; i++) {
             for(int j = 0; j < nH -1; j++) {
 
-                elements[index] = new Element(nodes[i*nH+j], nodes[(i+1)*nH+j], nodes[(i+1)*nH+j+1], nodes[i*nH+j+1], index, data.conductivity);
+                elements[index] = new Element(nodes[i*nH+j], nodes[(i+1)*nH+j], nodes[(i+1)*nH+j+1], nodes[i*nH+j+1], index);
                 index++;
             }
         }
@@ -68,7 +72,7 @@ public class Grid {
             }
         }
 
-//jacobian, macierze
+//JACOBIAN, LOKALNE MACIERZE
 
         for(int i = 0; i < elementsAmount; i++) {
 
@@ -79,14 +83,14 @@ public class Grid {
             elements[i].vectorP = new VectorP(elements[i].jacobian, elements[i].edge);
         }
 
-//globalne macierze
+//GLOBALNE MACIERZE
 
         for(int i = 0; i < elementsAmount; i++) {
             for(int j = 0; j < 4; j++) {
                 for(int k = 0; k < 4; k++) {
                     globalMatrixH[elements[i].nodes[j].id][elements[i].nodes[k].id] += elements[i].matrixH.matrixH[j][k];
                     globalMatrixH_bc[elements[i].nodes[j].id][elements[i].nodes[k].id] += elements[i].matrixH_bc.matrixHBC[j][k];
-                    globalMatrixC[elements[i].nodes[j].id][elements[i].nodes[k].id] += elements[i].matrixC.C[j][k];
+                    globalMatrixC[elements[i].nodes[j].id][elements[i].nodes[k].id] += elements[i].matrixC.matrixC[j][k];
                     globalVectorP[elements[i].nodes[j].id][elements[i].nodes[k].id] += elements[i].vectorP.vectorP[j][k];
                 }
             }
@@ -101,7 +105,7 @@ public class Grid {
         double[][] HC = new double[nodesAmount][nodesAmount];
         double step_time = data.simulation_step_time;
 
-//        int flaga = 0;
+        int flaga = 0;
         double[][] globalVectorPtmp = new double[nodesAmount][nodesAmount];
 
         for(int z = 0; z < data.simulation_time/data.simulation_step_time; z++) {
@@ -115,40 +119,40 @@ public class Grid {
                     globalVectorPtmp[i][j] = globalVectorP[i][j] + (globalMatrixC[i][j] / data.simulation_step_time) * temperatures[j];
                     vectorP[i] += globalVectorPtmp[i][j];
                 }
-                //System.out.print(vectorP[i]+" * ");
+                System.out.print(df.format(vectorP[i])+" * ");
             }
-            //System.out.print("\n");
+            System.out.print("\n");
 
-//            if(flaga < 2) {
-//                for (int i = 0; i < nodesAmount; i++) {
-//                    for (int j = 0; j < nodesAmount; j++) {
-//                        System.out.print(HC[i][j] + " ");
-//                    }
-//                    System.out.println();
-//                }
-//                flaga ++;
-//            }
-//            System.out.print("\n\n");
+            if(flaga < 2) {
+                for (int i = 0; i < nodesAmount; i++) {
+                    for (int j = 0; j < nodesAmount; j++) {
+                        System.out.print(df.format(HC[i][j]) + " ");
+                    }
+                    System.out.println();
+                }
+                flaga ++;
+            }
+            System.out.print("\n\n");
 
             double m, s;
             double[][] globalMatrixHtmp = new double[nodesAmount][nodesAmount+1];
 
-            //Eliminacja gaussa
+            //ELIMINACJA GAUSSA
             for (int i = 0; i < nodesAmount; i++) {
                 for (int j = 0; j < nodesAmount+1; j++) {
                     if (j == nodesAmount) {
-                        globalMatrixHtmp[i][j] = vectorP[i];//dopisujemy wektor P
+                        globalMatrixHtmp[i][j] = vectorP[i];
                     }
-                    else globalMatrixHtmp[i][j] = HC[i][j];//macierz wspolczynnikow
+                    else globalMatrixHtmp[i][j] = HC[i][j];
                 }
             }
 
-            //zerowanie wspolczynnikow
+
             for (int i = 0; i < nodesAmount - 1; i++)
             {
                 for (int j = i + 1; j < nodesAmount; j++)
                 {
-                    m = -globalMatrixHtmp[j][i] / globalMatrixHtmp[i][i];	//m mnoznik przez który mnozone sa elementy macierzy
+                    m = -globalMatrixHtmp[j][i] / globalMatrixHtmp[i][i];
                     for (int k = i + 1; k <= nodesAmount; k++)
                     {
                         globalMatrixHtmp[j][k] += m * globalMatrixHtmp[i][k];
@@ -156,32 +160,28 @@ public class Grid {
                 }
             }
 
-            //Wyliczanie niewiadomych
+
             for (int i = nodesAmount - 1; i >= 0; i--)
             {
-                s = globalMatrixHtmp[i][nodesAmount];								//s zlicza sume iloczynow
+                s = globalMatrixHtmp[i][nodesAmount];
                 for (int j = nodesAmount - 1; j >= i + 1; j--)
                 {
                     s -= globalMatrixHtmp[i][j] * vectorP[j];
                 }
                 vectorP[i] = s / globalMatrixHtmp[i][i];
                 temperatures[i]	= vectorP[i];
-
-//                System.out.print(vectorP[i] + " # " );
             }
-//            System.out.print("\n");
 
 
             double minTemp = temperatures[0];
             double maxTemp = temperatures[0];
-            for (int i = 1; i < nodesAmount; i++)
-            {
-                if (temperatures[i] > maxTemp)
-                {
+            for (int i = 1; i < nodesAmount; i++) {
+
+                if (temperatures[i] > maxTemp) {
                     maxTemp = temperatures[i];
                 }
-                if (temperatures[i] < minTemp)
-                {
+
+                if (temperatures[i] < minTemp) {
                     minTemp = temperatures[i];
                 }
             }

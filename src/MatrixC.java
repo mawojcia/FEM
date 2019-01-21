@@ -3,13 +3,9 @@ import java.io.FileNotFoundException;
 public class MatrixC {
 
     Jacobian jacobian;
-    double c = 700;
-    double ro = 7800;
 
     double[][][] NNT = new double[4][4][4];
-    double[][] C = new double[4][4];
-
-//    potrzebny do wyznaczania temperatury
+    double[][] matrixC = new double[4][4];
 
     public MatrixC(Jacobian jacobian) throws FileNotFoundException {
         this.jacobian = jacobian;
@@ -27,7 +23,7 @@ public class MatrixC {
         for(int i = 0; i < 4; i++) {
             for(int j = 0; j < 4; j++){
                 for(int k = 0; k < 4; k++) {
-                    C[i][j] += NNT[k][i][j];
+                    matrixC[i][j] += NNT[k][i][j];
                 }
             }
         }

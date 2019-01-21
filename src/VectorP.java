@@ -19,7 +19,6 @@ public class VectorP {
 
     double[][] vectorP = new double[4][4];
 
-//    WEKTOR OBCIĄŻEŃ STRUMIENI CIEPLNYCH
 
     public VectorP(Jacobian jacobian, int[] edge) throws FileNotFoundException {
 

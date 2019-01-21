@@ -11,9 +11,7 @@ public class MatrixH {
 
     double[][][] sum = new double[4][4][4];
 
-//    MACIERZ H WYKONAUJEMY LOKALNIE DLA KAŻDEGO ELEMENTU
 //    K*({dN/dX}*{dN/dX}^T + {dN/dY}*{dN/dY}^T)*DETJ
-
 
     public MatrixH(Jacobian jacobian) throws FileNotFoundException {
         this.jacobian = jacobian;
@@ -26,7 +24,6 @@ public class MatrixH {
             {
                 for (int k = 0; k < 4; k++)
                 {
-//                    {dN/dX}*{dN/dX}^T, analogicznie dla Y.
                     matrixX[i][j][k] = jacobian.dNdX[i][j] * jacobian.dNdX[i][k];
                     matrixY[i][j][k] = jacobian.dNdY[i][j] * jacobian.dNdY[i][k];
 

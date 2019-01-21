@@ -2,7 +2,7 @@ import java.lang.*;
 
 public class Jacobian {
 
-    Node[] nodes = new Node[4];
+    Node[] nodes;
 
     double[] ksi = new double[4];
     double[] eta = new double[4];
@@ -24,16 +24,13 @@ public class Jacobian {
     double[][] dNdX = new double[4][4];
     double[][] dNdY = new double[4][4];
 
-//    FUNKCJE KSZTAŁTU ZDEFINIOWANE SĄ W LOAKLNYM UKŁADZIE WSPÓŁRZĘDNYCH, DLATEGO POTRZEBUJEMY PRZEJŚĆ Z PUNKTÓW
-//    X I Y NA PUNKTY KSI I ETA.
-
     public Jacobian(Node[] nodes) {
         this.nodes = nodes;
 
         for(int i = 0; i < 4; i++) {
             x[i] = nodes[i].x;
             y[i] = nodes[i].y;
-            System.out.println("("+x[i]+", "+y[i]+")");
+            //System.out.println("("+x[i]+", "+y[i]+")");
         }
 
 //        PUNKTY CAŁKOWANIA
@@ -48,7 +45,6 @@ public class Jacobian {
         eta[3] = 1/(Math.sqrt(3));
 
 
-        //N=1/4*(1-ksi)(1-eta)
         //FUNKCJE KSZTAŁTU
         for(int i = 0; i < 4; i++) {
             N[i][0] = 0.25*(1-ksi[i])*(1-eta[i]);
